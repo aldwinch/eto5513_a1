@@ -1,0 +1,106 @@
+---
+title: "a1"
+author: "Aldwin Chong"
+date: "2025-07-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(gganimate)
+```
+
+ETO5513 - ASSIGNMENT 1
+=======================================================================
+  
+-----------------------------------------------------------------------
+
+Aldwin Chong 
+
+### PROBLEM OUTLINE
+As we continue to advance as a society and our economic output continues to grow, the world must now consider the future of the planet; namely can we continue economic output without the same destruction of the environment. In order to investigate this the question needs to be asked, which country is able to effiecently maintain economic output and what insights can be gleamed from this. That is, which country has the highest economic output whilst keeping CO2 emmisions low?
+
+### VARIABLE DESCRIPTION
+The dataset includes the following variables (however most offer no value):
+"Entity"                            
+"Code"                              
+"Year"                              
+"Annual.CO..emissions..per.capita."
+"GDP.per.capita"                    
+"X900793.annotations"               
+"Population..historical."           
+"World.regions.according.to.OWID"  
+"time"                             
+"time.1"                            
+"time.2"                            
+"time.3"     
+
+The dataset shows the GDP per capita and the CO2 emissions per capita in the year 2022 for each country.
+"Year", "time", time.1", "time.2", "time.3" all depict the same value - 2022; the year of dataset, as all this data is relates to 2022 only these variables are not needed while "X900793.annotations" is for comments which has not been utilised in this dataset. "Entity" and "Code" depict the county in question; with entity being full country name and code being a 3 character code with "World.regions.according.to.OWID" depicting what region each country is. "Annual.CO..emissions..per.capita." and "GDP.per.capita" are self explanatory, with the former depicting the CO2 emissions per capita in tonnes per person (for 2022) and the latter GDP per capita in international dollars at 2011 prices (for 2022), while "Population..historical." provides an approximate indication of population size at the time.
+```{r}
+df <- read.csv("Data/co2-emissions-vs-gdp.csv") 
+knitr::kable(df)
+
+cat("The dataset contains", nrow(df), "observations and", ncol(df), "variables.")
+```
+
+
+
+
+However to make the dataset more easier to read we can remove the unneccary varibles and rename the variables to more applicable titles.
+```{r}
+clean_df <- df %>%
+  select(
+    'Entity',
+    'Code',
+    'Annual.CO..emissions..per.capita.',
+    'GDP.per.capita',
+    'Population..historical.',
+    'World.regions.according.to.OWID'
+  ) %>%
+  rename(
+    country = 'Entity',
+    iso_code = 'Code',
+    co2_per_capita = 'Annual.CO..emissions..per.capita.',
+    gdp_per_capita = 'GDP.per.capita',
+    population = 'Population..historical.',
+    region = 'World.regions.according.to.OWID'
+  )
+
+co2_gdp <- clean_df %>%
+  select(
+    "region",
+    "co2_per_capita",
+    "gdp_per_capita"
+  ) %>%
+  group_by(region) %>%
+  summarise(
+    mean_co2 = mean(co2_per_capita, na.rm = TRUE),
+    var_co2 = var(co2_per_capita, na.rm = TRUE),
+    med_co2 = median(co2_per_capita, na.rm = TRUE),
+    mean_gdp = mean(gdp_per_capita, na.rm = TRUE),
+    var_gdp = var(gdp_per_capita, na.rm = TRUE),
+    med_gdp = median(gdp_per_capita, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+kable(head(co2_gdp, 10), digits = 2, caption = "Summary Statistics by Region")
+```
+
+```{r}
+ggplot(co2_gdp, aes(x = mean_gdp, y = mean_co2, label = region)) +
+  geom_point(size = 3) +
+  geom_text(vjust = -1, hjust = 0.5, size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "red", linetype = "dashed", alpha = 0.1, linewidth = 0.3) +
+  labs(
+    title = "Mean CO2 Emissions vs. Mean GDP per Capita by Region",
+    x = "Mean GDP per Capita (international $ in 2011 price)",
+    y = "Mean CO2 Emissions per Capita (tonnes per person)"
+  ) 
+```
+As we would expect, there is a positive relationship between GDP and CO2 emissions with higher GDP production also resulting in higher CO2 emissions. This is to be expected as higher output would require the use of more resources. Regions above the regression line indicate regions which appear to be able to better utilise 
