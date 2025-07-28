@@ -104,4 +104,7 @@ ggplot(co2_gdp, aes(x = mean_gdp, y = mean_co2, label = region)) +
     y = "Mean CO2 Emissions per Capita (tonnes per person)"
   ) 
 ```
+  
+### CONCLUSION
+As we would expect, there is a positive relationship between GDP and CO2 emissions with higher GDP production also resulting in higher CO2 emissions. This is to be expected as higher output would require the use of more resources. Regions above the regression line indicate regions which appear to be able to better utilise energy to produce their GDP or have implemented widespread sustainable energy sources, which other regions should look to as an example on how to improve efficiency. However drawing this conclusion does not tell the full story, the 3 regions above the regression line (North America, Asia and Oceania) also have significantly higher CO2 emissions variances, indicating that the increased efficiency may be a result of several countries in the region rather than the region as a whole. Additionally this does not factor the make up of the GDP output; certain regions may produce a basket of goods which requires significantly more energy consumption such as agriculture or production of building materials vs service based GDP. A more in depth analysis would be needed to gain actionable insight, such as a further breakdown into countries to investigate if it is matter of GDP sectors, composition of energy source of even infrastructure. Additionally a analysis over multiple years instead of one could provide insight into what changes work in reducing CO2 emissions.
 
