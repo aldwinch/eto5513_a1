@@ -21,37 +21,37 @@ ETO5513 - ASSIGNMENT 1
 Aldwin Chong 
 
 ### PROBLEM OUTLINE
-As we continue to advance as a society and our economic output continues to grow, the world must now consider the future of the planet; namely can we continue economic output without the same destruction of the environment. In order to investigate this the question needs to be asked, which region is able to efficiently maintain economic output and what insights can be gleamed from this. That is, which region has the highest economic output whilst keeping CO2 emissions low?
-  
+As we continue to advance as a society and our economic output continues to grow, the world must now consider the future of the planet; namely can we continue economic output without the same destruction of the environment. In order to investigate this the question needs to be asked, which country is able to effiecently maintain economic output and what insights can be gleamed from this. That is, which country has the highest economic output whilst keeping CO2 emmisions low?
+
 ### VARIABLE DESCRIPTION
 The dataset includes the following variables (however most offer no value):
-```{r, echo = FALSE}
-df <- read.csv("Data/co2-emissions-vs-gdp.csv") 
+"Entity"                            
+"Code"                              
+"Year"                              
+"Annual.CO..emissions..per.capita."
+"GDP.per.capita"                    
+"X900793.annotations"               
+"Population..historical."           
+"World.regions.according.to.OWID"  
+"time"                             
+"time.1"                            
+"time.2"                            
+"time.3"     
 
-varis <- data.frame(var_name = names(df))
-kable(varis, caption = "Dataset variable names")
-```  
-  
 The dataset shows the GDP per capita and the CO2 emissions per capita in the year 2022 for each country.
 "Year", "time", time.1", "time.2", "time.3" all depict the same value - 2022; the year of dataset, as all this data is relates to 2022 only these variables are not needed while "X900793.annotations" is for comments which has not been utilised in this dataset. "Entity" and "Code" depict the county in question; with entity being full country name and code being a 3 character code with "World.regions.according.to.OWID" depicting what region each country is. "Annual.CO..emissions..per.capita." and "GDP.per.capita" are self explanatory, with the former depicting the CO2 emissions per capita in tonnes per person (for 2022) and the latter GDP per capita in international dollars at 2011 prices (for 2022), while "Population..historical." provides an approximate indication of population size at the time.
-  
-The data used in this mini-project was obtained via the 2022 figures from [Our World in Data](https://ourworldindata.org/grapher/co2-emissions-vs-gdp).
-```{r, echo = FALSE}
+```{r}
+df <- read.csv("Data/co2-emissions-vs-gdp.csv") 
+knitr::kable(df)
+
 cat("The dataset contains", nrow(df), "observations and", ncol(df), "variables.")
-cat(str(head(df, 2)))
 ```
-  
-However to make the dataframe more easier to read and reference we can remove the unnecessary variables and rename the variables to more applicable titles. As mentioned above, "Year", "time", time.1", "time.2", "time.3" and "X900793.annotations" are all not needed and can be removed. The other variables can be renamed to more easily understandable labels:
-    country = 'Entity',
-    iso_code = 'Code',
-    co2_per_capita = 'Annual.CO..emissions..per.capita.',
-    gdp_per_capita = 'GDP.per.capita',
-    population = 'Population..historical.',
-    region = 'World.regions.according.to.OWID'
-  
-From here we can then calculate some summary statistics to see the CO2 emissions and GDP production per region.
-    
-```{r, echo = FALSE}
+
+
+
+
+However to make the dataset more easier to read we can remove the unneccary varibles and rename the variables to more applicable titles.
+```{r}
 clean_df <- df %>%
   select(
     'Entity',
@@ -89,19 +89,17 @@ co2_gdp <- clean_df %>%
 
 kable(head(co2_gdp, 10), digits = 2, caption = "Summary Statistics by Region")
 ```
-  
-As we can see from the above summary statistics, Oceania has the highest mean CO2 emissions and GDP per capita, whilst Africa has the lowest values for both. 
-**The regions of North America, Asia and Oceania have the highest variation if CO2 emissions per capita indicating that countries within these regions have vastly different energy cosumption and composition profiles.**
 
-```{r, echo = FALSE}
+```{r}
 ggplot(co2_gdp, aes(x = mean_gdp, y = mean_co2, label = region)) +
   geom_point(size = 3) +
   geom_text(vjust = -1, hjust = 0.5, size = 3) +
-  geom_smooth(method = "lm", se = FALSE, color = "red", linetype = "dashed", linewidth = 0.3) +
+  geom_smooth(method = "lm", se = FALSE, color = "red", linetype = "dashed", alpha = 0.1, linewidth = 0.3) +
   labs(
     title = "Mean CO2 Emissions vs. Mean GDP per Capita by Region",
     x = "Mean GDP per Capita (international $ in 2011 price)",
     y = "Mean CO2 Emissions per Capita (tonnes per person)"
   ) 
 ```
-
+### CONCLUSION
+As we would expect, there is a positive relationship between GDP and CO2 emissions with higher GDP production also resulting in higher CO2 emissions. This is to be expected as higher output would require the use of more resources. Regions above the regression line indicate regions which appear to be able to better utilise energy to produce their GDP or have implemented widespread sustainable energy sources, which other regions should look to as an example on how to improve efficiency. However drawing this conclusion does not tell the full story, the 3 regions above the regression line (North America, Asia and Oceania) also have significantly higher CO2 emissions variances, indicating that the increased efficiency may be a result of several countries in the region rather than the region as a whole. Additionally this does not factor the make up of the GDP output; certain regions may produce a basket of goods which requires significantly more energy consumption such as agriculture or production of building materials vs service based GDP. A more in depth analysis would be needed to gain actionable insight, such as a further breakdown into countries to investigate if it is matter of GDP sectors, composition of energy source of even infrastructure. Additionally a analysis over multiple years instead of one could provide insight into what changes work in reducing CO2 emissions.
